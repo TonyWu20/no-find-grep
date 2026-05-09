@@ -1,0 +1,8 @@
+{
+  "name": "no-find-grep",
+  "description": "Blocks find/grep in Bash calls. Enforces fd/rg per CLAUDE.md.",
+  "version": "0.1.0",
+  "author": {
+    "name": "TonyWu20"
+  }
+}
