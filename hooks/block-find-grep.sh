@@ -39,4 +39,17 @@ if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)grep(\s|$)'; then
 	exit 2
 fi
 
+# Detect rg commands with escaped pipe (\|).
+# rg uses | for alternation, NOT \|. \| matches a literal pipe char.
+if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | grep -qF '\|'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  ESCAPED PIPE IN rg DETECTED! \\| means literal pipe in rg!" >&2
+	echo "  READ YOUR DAMN CLAUDE.md: rg uses | for alternation, NOT \\|!" >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: replace '\\|' with '|' in your rg pattern" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
 exit 0

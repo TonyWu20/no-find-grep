@@ -1,10 +1,10 @@
 # no-find-grep
 
-A [Claude Code](https://claude.ai/code) plugin that blocks bare `find` and `grep` commands in Bash tool calls and tells you to use `fd` and `rg` instead.
+A [Claude Code](https://claude.ai/code) plugin that blocks bare `find` and `grep` commands in Bash tool calls, and detects common `rg` misuse (like `\|` for alternation). Tells you to use `fd` and `rg` correctly instead.
 
 ## What it does
 
-Registers a `PreToolUse` hook that intercepts every Bash command before execution. If the command contains a bare `find` or `grep` (standalone, not part of `fd`/`rg`/`git grep`), the hook prints a message and exits with code 2, preventing the command from running.
+Registers a `PreToolUse` hook that intercepts every Bash command before execution. If the command contains a bare `find` or `grep` (standalone, not part of `fd`/`rg`/`git grep`), or uses `\|` inside an `rg` command (which means literal pipe, not alternation), the hook prints a message and exits with code 2, preventing the command from running.
 
 ## Why CLAUDE.md wasn't enough
 
@@ -39,4 +39,4 @@ Or manually, register the plugin in your Claude Code settings:
 | File | Purpose |
 |------|---------|
 | `hooks/hooks.json` | Hook registration — intercepts `Bash` tool calls |
-| `hooks/block-find-grep.sh` | Shell script that checks for `find`/`grep` and blocks them |
+| `hooks/block-find-grep.sh` | Shell script that checks for `find`/`grep` and `rg` misuse and blocks them |
