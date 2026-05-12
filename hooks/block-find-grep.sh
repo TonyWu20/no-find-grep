@@ -14,7 +14,7 @@ fi
 # Catch: "^find ", "^grep ", "| find ", "| grep ", "; find ", etc.
 # Allow: fd, rg, git grep, etc.
 
-if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)find(\s|$)'; then
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)find(\s|$)'; then
 	# Don't block if "fd" is being used instead
 	# (check: 'find' is NOT part of 'fd')
 
@@ -28,7 +28,7 @@ if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)find(\s|$)'; then
 	exit 2
 fi
 
-if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)grep(\s|$)'; then
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)grep(\s|$)'; then
 	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 	echo "============================================================" >&2
 	echo "  BARE grep DETECTED! Use rg instead of grep!" >&2
@@ -39,9 +39,37 @@ if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)grep(\s|$)'; then
 	exit 2
 fi
 
+# Detect rg commands with -r followed by a letter (NOT space or =).
+# GNU grep: -r means --recursive. rg: -r means --replace.
+# -rn/-ri/-rl etc. silently consume the letter as replacement text.
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | rg -q '\-r[a-zA-Z]'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  grep -r FLAG DETECTED IN rg COMMAND!" >&2
+	echo "  In rg, -r means --replace, NOT --recursive like grep." >&2
+	echo "  rg is ALREADY recursive by default — no -r flag needed." >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: remove the -r flag. rg searches recursively by default." >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect rg commands with standalone -L flag.
+# GNU grep: -L means --files-without-match. rg: -L means --follow.
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | rg -q '(^|\s)-L(\s|$)'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  grep -L FLAG DETECTED IN rg COMMAND!" >&2
+	echo "  In rg, -L means --follow, NOT --files-without-match!" >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: use 'rg --files-without-match' for grep -L behavior" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
 # Detect rg commands with escaped pipe (\|).
 # rg uses | for alternation, NOT \|. \| matches a literal pipe char.
-if echo "$COMMAND" | grep -qE '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | grep -qF '\|'; then
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | rg -qF '\|'; then
 	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 	echo "============================================================" >&2
 	echo "  ESCAPED PIPE IN rg DETECTED! \\| means literal pipe in rg!" >&2
