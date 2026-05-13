@@ -10,7 +10,7 @@ Registers a `PreToolUse` hook that intercepts every Bash command before executio
 |---------|-----|---------|
 | Bare `find` | Use `fd` instead | `find . -name '*.txt'` |
 | Bare `grep` | Use `rg` instead | `grep -rn 'pattern' .` |
-| `rg` with `-r<letter>` | `-r` means `--replace` in rg, not `--recursive`. The letter becomes replacement text. rg is recursive by default. | `rg -rn 'pattern' .` → replaces matches with "n" |
+| `rg` with `-r<letter>` (scoped to rg's own flags) | `-r` means `--replace` in rg, not `--recursive`. The letter becomes replacement text. rg is recursive by default. Only flags on the `rg` command itself are checked — other commands' `-r` flags in a pipeline are ignored. | `rg -rn 'pattern' .` → replaces matches with "n" |
 | `rg` with standalone `-L` | `-L` means `--follow` in rg, not `--files-without-match` in grep | `rg -L 'pattern' .` |
 | `rg` with `\|` | rg uses `|` for alternation, `\|` matches a literal pipe | `rg 'foo\|bar'` → matches `foo|bar` literal |
 

@@ -42,7 +42,7 @@ fi
 # Detect rg commands with -r followed by a letter (NOT space or =).
 # GNU grep: -r means --recursive. rg: -r means --replace.
 # -rn/-ri/-rl etc. silently consume the letter as replacement text.
-if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | rg -q '\-r[a-zA-Z]'; then
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | rg -o '(^|[|;&$()]+\s*)rg[^|;&$()]*' | rg -q '(^|\s)-r[a-zA-Z]'; then
 	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 	echo "============================================================" >&2
 	echo "  grep -r FLAG DETECTED IN rg COMMAND!" >&2
