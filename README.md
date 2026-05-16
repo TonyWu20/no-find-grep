@@ -1,6 +1,6 @@
 # no-find-grep
 
-A [Claude Code](https://claude.ai/code) plugin that blocks bare `find` and `grep` commands in Bash tool calls, and detects common `rg` misuse (like `\|` for alternation, `-r` for recursive). Tells you to use `fd` and `rg` correctly instead.
+A [Claude Code](https://claude.ai/code) plugin that blocks bare `find` and `grep` commands in Bash tool calls, and detects common `rg` misuse (like `\|` for alternation, `-r` for recursive). Tells you to use `fd` (or `fdfind` on Debian/Ubuntu) and `rg` correctly instead.
 
 ## What it does
 
@@ -8,7 +8,7 @@ Registers a `PreToolUse` hook that intercepts every Bash command before executio
 
 | Pattern | Why | Example |
 |---------|-----|---------|
-| Bare `find` | Use `fd` instead | `find . -name '*.txt'` |
+| Bare `find` | Use `fd` (or `fdfind` on Debian/Ubuntu) instead | `find . -name '*.txt'` |
 | Bare `grep` | Use `rg` instead | `grep -rn 'pattern' .` |
 | `rg` with `-r<letter>` (scoped to rg's own flags) | `-r` means `--replace` in rg, not `--recursive`. The letter becomes replacement text. rg is recursive by default. Only flags on the `rg` command itself are checked — other commands' `-r` flags in a pipeline are ignored. | `rg -rn 'pattern' .` → replaces matches with "n" |
 | `rg` with standalone `-L` | `-L` means `--follow` in rg, not `--files-without-match` in grep | `rg -L 'pattern' .` |

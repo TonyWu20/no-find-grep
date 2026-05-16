@@ -20,10 +20,10 @@ if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)find(\s|$)'; then
 
 	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 	echo "============================================================" >&2
-	echo "  BARE find DETECTED! Use fd instead of find!" >&2
-	echo "  READ YOUR DAMN CLAUDE.md: fd, NOT find!" >&2
+	echo "  BARE find DETECTED! Use fd (or fdfind on Debian/Ubuntu) instead of find!" >&2
+	echo "  READ YOUR DAMN CLAUDE.md: fd (or fdfind), NOT find!" >&2
 	echo "  Your command: $COMMAND" >&2
-	echo "  Fix: replace 'find' with 'fd'" >&2
+	echo "  Fix: replace 'find' with 'fd' (or 'fdfind' on Debian/Ubuntu)" >&2
 	echo "============================================================" >&2
 	exit 2
 fi

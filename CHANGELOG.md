@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 — 2026-05-17
+
+### Added
+
+- Error messages for bare `find` now hint that the command may be installed as
+  `fdfind` on Debian/Ubuntu-based Linux distributions.
+
 ## 0.3.0 — 2026-05-13
 
 ### Fixed
