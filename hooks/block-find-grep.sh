@@ -80,4 +80,91 @@ if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)rg(\s|$)' && echo "$COMMAND" | rg -q
 	exit 2
 fi
 
+# Detect sed -n (viewing file lines instead of using Read tool).
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)sed(\s|$)' && echo "$COMMAND" | rg -o '(^|[|;&$()]+\s*)sed[^|;&$()]*' | rg -q '(\s|^)-[a-zA-Z]*n[a-zA-Z]*'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  sed -n DETECTED! Use the Read tool to view file content!" >&2
+	echo "  sed -n is for peeking at files. Read tool does this better." >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use the Read tool with offset/limit to view specific lines" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect cat -A/-v/-vet/-e/-t/-E/-T (inspecting hidden chars instead of Read tool).
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)cat(\s|$)' && echo "$COMMAND" | rg -o '(^|[|;&$()]+\s*)cat[^|;&$()]*' | rg -q '(\s|^)-[a-zA-Z]*[AvVeEtT][a-zA-Z]*'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  cat WITH INSPECTION FLAGS DETECTED!" >&2
+	echo "  Use the Read tool to inspect file content instead of cat -A/-v/-vet!" >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use the Read tool to view the file" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect xxd (hex dump instead of Read tool).
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)xxd(\s|$)'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  xxd DETECTED! Use the Read tool to inspect file content!" >&2
+	echo "  xxd is for hex dumps. Read tool shows file contents directly." >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use the Read tool instead of xxd" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect od (octal dump instead of Read tool).
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)od(\s|$)'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  od DETECTED! Use the Read tool to inspect file content!" >&2
+	echo "  od is for octal/hex dumps. Read tool shows file contents directly." >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use the Read tool instead of od" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect sed -i (in-place editing instead of Edit tool).
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)sed(\s|$)' && echo "$COMMAND" | rg -o '(^|[|;&$()]+\s*)sed[^|;&$()]*' | rg -q '(\s|^)-[a-zA-Z]*i[a-zA-Z]*'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  sed -i DETECTED! Use the Edit tool for file editing!" >&2
+	echo "  sed -i is for in-place file editing. Edit tool does this better." >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use the Edit tool to modify the file" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect sd (find-and-replace instead of Edit tool).
+# sd returns exit code 0 even when no substitution occurs, so agents
+# cannot rely on it for success/failure detection.
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)sd(\s|$)'; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  sd DETECTED! Use the Edit tool for file find-and-replace!" >&2
+	echo "  sd always returns exit code 0 even when no substitution happens." >&2
+	echo "  Edit tool is the correct way to edit files, not sd." >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use the Edit tool to modify the file" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
+# Detect python -c/python3 -c with file operations (open()) instead of Read/Edit.
+if echo "$COMMAND" | rg -q '(^|[|;&$()]+\s*)python3?(\s|$)' && echo "$COMMAND" | rg -q '\s-c\s' && echo "$COMMAND" | rg -q 'open\('; then
+	TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	echo "============================================================" >&2
+	echo "  python -c WITH FILE OPERATIONS DETECTED!" >&2
+	echo "  Use the Read or Edit tool instead of ad-hoc Python scripts!" >&2
+	echo "  Your command: $COMMAND" >&2
+	echo "  Fix: Use Read tool to read files, Edit tool to modify them" >&2
+	echo "============================================================" >&2
+	exit 2
+fi
+
 exit 0

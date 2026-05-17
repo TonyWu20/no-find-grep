@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.0 — 2026-05-17
+
+### Added
+
+- Detection for `sed -n` — blocks using sed to view file content instead of the
+  Read tool.
+- Detection for `cat -A`, `cat -v`, `cat -vet`, `cat -e`, `cat -t` — blocks using
+  cat to inspect hidden characters instead of the Read tool.
+- Detection for `xxd` — blocks hex dumps of files; use the Read tool.
+- Detection for `od` — blocks octal dumps of files; use the Read tool.
+- Detection for `sed -i` — blocks in-place file editing with sed; use the Edit tool.
+- Detection for `sd` — blocks find-and-replace with sd (which returns exit 0 even on
+  no-op); use the Edit tool.
+- Detection for `python -c` / `python3 -c` with `open()` — blocks ad-hoc Python
+  scripts that read or edit files; use Read/Edit tools.
+
 ## 0.3.1 — 2026-05-17
 
 ### Added
