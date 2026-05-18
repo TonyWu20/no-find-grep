@@ -56,4 +56,5 @@ Or manually, register the plugin in your Claude Code settings:
 |------|---------|
 | `hooks/hooks.json` | Hook registration — intercepts `Bash` tool calls |
 | `hooks/block-find-grep.sh` | Shell script that blocks `find`/`grep` misuse, `rg` misuse, and shell-based file read/edit (enforcing `Read`/`Edit` tools) |
+| `hooks/session-end.sh` | Shell script that reports blocked-command count on session exit and `/clear` |
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 — 2026-05-18
+
+### Added
+
+- Blocked-attempts counter: displays how many commands were blocked when the
+  session exits or `/clear` is run. Counter resets naturally after `/clear`
+  since a new session ID is generated.
+
 ## 0.4.0 — 2026-05-17
 
 ### Added
