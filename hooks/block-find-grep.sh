@@ -17,14 +17,25 @@ increment_counter() {
     if [[ -z "$COUNTER_FILE" ]]; then
         return
     fi
-    (
-        flock -x 200
-        local count=0
-        if [[ -f "$COUNTER_FILE" ]]; then
-            count=$(cat "$COUNTER_FILE" 2>/dev/null || echo 0)
+
+    local lockdir="${COUNTER_FILE}.lock"
+    local retries=0
+
+    until mkdir "$lockdir" 2>/dev/null; do
+        retries=$((retries + 1))
+        if [[ $retries -ge 10 ]]; then
+            return
         fi
-        echo $((count + 1)) > "$COUNTER_FILE"
-    ) 200>"$COUNTER_FILE"
+        sleep 0.01 || return
+    done
+
+    local count=0
+    if [[ -f "$COUNTER_FILE" ]]; then
+        count=$(cat "$COUNTER_FILE" 2>/dev/null) || count=0
+    fi
+    echo $((count + 1)) > "$COUNTER_FILE" 2>/dev/null || true
+
+    rmdir "$lockdir" 2>/dev/null || true
 }
 
 if [[ -z "$COMMAND" ]]; then

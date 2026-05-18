@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.1 — 2026-05-18
+
+### Fixed
+
+- **Critical**: Replaced `flock` (Linux-only) with `mkdir`-based portable mutex
+  in the blocked-attempts counter (`hooks/block-find-grep.sh`). On macOS,
+  `flock` is not available, which caused the entire hook script to crash
+  with exit code 127 (instead of reaching `exit 2` to block the command).
+  Claude Code treats unknown non-zero exits as hook errors, so all
+  blocked-command detection was silently bypassed on macOS.
+- Counter failures are now completely non-fatal. If the lock cannot be
+  acquired (stale lock, permissions, etc.), the counter silently skips
+  the increment rather than risking a hook crash.
+
 ## 0.6.0 — 2026-05-18
 
 ### Added

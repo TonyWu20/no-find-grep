@@ -60,3 +60,5 @@ Or manually, register the plugin in your Claude Code settings:
 | `hooks/hint-edit-reread.sh` | Shell script that catches `Edit` tool failures and hints the agent to re-read the file via `additionalContext` |
 | `hooks/session-end.sh` | Shell script that reports blocked-command count on session exit and `/clear` |
 
+Compatible with Linux and macOS. Locking uses `mkdir`-based mutex (no `flock` dependency).
+
