@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0 — 2026-05-18
+
+### Added
+
+- `PostToolUseFailure` hook (`hooks/hint-edit-reread.sh`) that catches Edit tool
+  failures when the old_string is not found in the target file (real error:
+  `String to replace not found in file.`). Provides `additionalContext` hinting
+  the agent to re-read the file with the Read tool before retrying. Limited to
+  Edit (not Write) and to "string not found" errors only (not permissions or
+  other failures).
+
 ## 0.5.0 — 2026-05-18
 
 ### Added

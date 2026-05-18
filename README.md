@@ -19,6 +19,7 @@ Registers a `PreToolUse` hook that intercepts every Bash command before executio
 | `sed -i` | Use `Edit` tool for file editing instead of sed in-place | `sed -i 's/old/new/' file` |
 | `sd` | Use `Edit` tool for find-and-replace. sd always returns exit 0 even on no-op. | `sd 'old' 'new' file` |
 | `python -c` with `open()` | Use `Read`/`Edit` tools for file operations instead of ad-hoc scripts | `python3 -c "open('f').read()"` |
+| `Edit` tool `PostToolUseFailure` | When `Edit` fails with `String to replace not found`, hints agent to re-read the file with `Read` tool before retrying | Agent context covers all `PostToolUseFailure` events |
 
 When a match is found, the hook prints a diagnostic message to stderr and exits with code 2, preventing the command from running.
 
@@ -56,5 +57,6 @@ Or manually, register the plugin in your Claude Code settings:
 |------|---------|
 | `hooks/hooks.json` | Hook registration — intercepts `Bash` tool calls |
 | `hooks/block-find-grep.sh` | Shell script that blocks `find`/`grep` misuse, `rg` misuse, and shell-based file read/edit (enforcing `Read`/`Edit` tools) |
+| `hooks/hint-edit-reread.sh` | Shell script that catches `Edit` tool failures and hints the agent to re-read the file via `additionalContext` |
 | `hooks/session-end.sh` | Shell script that reports blocked-command count on session exit and `/clear` |
 
