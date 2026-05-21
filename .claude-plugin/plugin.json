@@ -1,7 +1,7 @@
 {
   "name": "no-find-grep",
-  "description": "Blocks find/grep in Bash calls. Enforces fd/rg per CLAUDE.md.",
-  "version": "0.6.1",
+  "description": "Blocks bare find/grep in Bash calls and detects common rg flag misuse. Enforces fd/rg per CLAUDE.md. Shell file-read and file-edit blocking has moved to the no-shell-file-ops plugin.",
+  "version": "1.0.0",
   "author": {
     "name": "TonyWu20"
   }

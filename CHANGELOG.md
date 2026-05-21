@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.0 — 2026-05-21
+
+### Removed
+
+- **Shell file-read detection:** `sed -n`, `cat -A/-v/-vet`, `xxd`, `od` blocking
+  has moved to the new `no-shell-file-ops` plugin.
+- **Shell file-edit detection:** `sed -i`, `sd`, `python -c` with `open()` blocking
+  has moved to the new `no-shell-file-ops` plugin.
+- **PostToolUseFailure hint:** `hint-edit-reread.sh` (Edit stale-string hint)
+  has moved to the new `no-shell-file-ops` plugin.
+
+### Fixed
+
+- **SessionEnd counter now surfaces its output:** Changed exit code from 0 to 2
+  so stderr is shown as a notice. Added guard against empty counter file values
+  to prevent silent `set -e` failures.
+
+### Changed
+
+- **Narrowed scope:** `no-find-grep` now focuses exclusively on find/grep
+  substitution enforcement and rg flag misuse detection.
+- **Version bump to 1.0.0** to signal the scope contraction. Affected features
+  are re-homed in the sibling `no-shell-file-ops` plugin.
+
 ## 0.6.1 — 2026-05-18
 
 ### Fixed
